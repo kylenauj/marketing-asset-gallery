@@ -3,19 +3,19 @@ import { supabase, PROVINCES, BRANDS, SKU_ASSET_TYPES, BRAND_ASSET_TYPES, ALL_AS
 
 const brandById = id => BRANDS.find(b => b.id === id)
 const typeById = id => ALL_ASSET_TYPES.find(t => t.id === id)
-// ── Hub banner ────────────────────────────────────────────────────────────────
+// -- Hub banner ----------------------------------------------------------------
 // Edit BANNER to update the hub page announcement. Set active: false to hide it.
 export const BANNER = {
   active: true,
   title: 'New photos available',
   body: 'Fresh lifestyle and product photography is now live. Check each brand for updated assets.',
-  cta: null,     // e.g. 'View assets' — set to null to hide button
+  cta: null,     // e.g. 'View assets' - set to null to hide button
   ctaUrl: null,  // e.g. 'https://...'
   color: '#004B6C',
 }
 
 
-// ââ App ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ App Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 export default function App() {
   const [province, setProvince] = useState(null)
   const [nav, setNav] = useState({ view: 'hub' })
@@ -30,13 +30,13 @@ export default function App() {
         {nav.view === 'hub' && <HubPage province={province} go={go} />}
         {nav.view === 'brand' && <BrandPage province={province} nav={nav} go={go} />}
         {nav.view === 'sku' && <SkuPage province={province} nav={nav} go={go} />}
-        {nav.view === 'inventory' && <InventoryPage province={province} />}
+        {nav.view === 'inventory' && <InventoryPage />}
       </div>
     </div>
   )
 }
 
-// ââ Province gate âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Province gate Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function ProvinceGate({ onSelect }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#f5f4f0 0%,#e8f0e4 100%)' }}>
@@ -61,7 +61,7 @@ function ProvinceGate({ onSelect }) {
   )
 }
 
-// ââ Header ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Header Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function Header({ province, nav, go, onSwitch }) {
   const crumbs = []
   if (nav.brandId) crumbs.push({ label: brandById(nav.brandId)?.name || nav.brandId, action: () => go({ view: 'brand', brandId: nav.brandId }) })
@@ -90,11 +90,17 @@ function Header({ province, nav, go, onSwitch }) {
     </div>
   )
 }
-// ââ Hub page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Hub page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function HubPage({ province, go }) {
   const [newCounts, setNewCounts] = useState({})
   const [totalCounts, setTotalCounts] = useState({})
+  const [banner, setBanner] = useState(BANNER)
   const provinceBrands = BRANDS.filter(b => b.provinces.includes(province.code))
+
+  useEffect(() => {
+    supabase.from('site_config').select('value').eq('key', 'banner').maybeSingle()
+      .then(({ data }) => { if (data?.value) setBanner({ ...BANNER, ...data.value }) })
+  }, [])
 
   useEffect(() => {
     supabase.from('skus').select('brand,is_new').eq('province', province.code)
@@ -110,22 +116,27 @@ function HubPage({ province, go }) {
 
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '36px 24px' }}>
-      {BANNER.active && (
-        <div style={{ background: BANNER.color, borderRadius: 12, padding: '16px 20px', marginBottom: 28, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{BANNER.title}</div>
-            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>{BANNER.body}</div>
-          </div>
-          {BANNER.cta && BANNER.ctaUrl && (
-            <a href={BANNER.ctaUrl} target="_blank" rel="noopener noreferrer"
-              style={{ flexShrink: 0, background: '#fff', color: BANNER.color, fontSize: 12, fontWeight: 600, padding: '8px 16px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-              {BANNER.cta}
-            </a>
+      {banner.active && (
+        <div style={{ background: banner.color || BANNER.color, borderRadius: 12, marginBottom: 28, overflow: 'hidden' }}>
+          {banner.imageUrl && (
+            <img src={banner.imageUrl} alt="" style={{ width: '100%', maxHeight: 220, objectFit: 'cover', display: 'block' }} />
           )}
+          <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 4 }}>{banner.title || BANNER.title}</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.8)', lineHeight: 1.5 }}>{banner.body || BANNER.body}</div>
+            </div>
+            {banner.cta && banner.ctaUrl && (
+              <a href={banner.ctaUrl} target="_blank" rel="noopener noreferrer"
+                style={{ flexShrink: 0, background: '#fff', color: banner.color || BANNER.color, fontSize: 12, fontWeight: 600, padding: '8px 16px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+                {banner.cta}
+              </a>
+            )}
+          </div>
         </div>
       )}
       <div style={{ marginBottom: 28 }}>
-        <h2 style={{ fontSize: 22, fontWeight: 500, color: '#1a1a1a', marginBottom: 6 }}>Brands â {province.name}</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 500, color: '#1a1a1a', marginBottom: 6 }}>Brands Ã¢ÂÂ {province.name}</h2>
         <p style={{ fontSize: 13, color: '#777' }}>Select a brand to browse products and assets.</p>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 16 }}>
@@ -146,7 +157,7 @@ function HubPage({ province, go }) {
               </div>
               <div style={{ fontSize: 17, fontWeight: 600, color: '#1a1a1a', marginBottom: 4 }}>{b.name}</div>
               <div style={{ fontSize: 12, color: '#888', marginBottom: 12 }}>
-                {count > 0 ? `${count} product${count !== 1 ? 's' : ''}${hasNew ? ` Â· ${newCounts[b.id]} new` : ''}` : 'No products yet'}
+                {count > 0 ? `${count} product${count !== 1 ? 's' : ''}${hasNew ? ` ÃÂ· ${newCounts[b.id]} new` : ''}` : 'No products yet'}
               </div>
               <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
                 {SKU_ASSET_TYPES.map(t => (
@@ -161,7 +172,7 @@ function HubPage({ province, go }) {
   )
 }
 
-// ââ Brand page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Brand page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function BrandPage({ province, nav, go }) {
   const { brandId } = nav
   const b = brandById(brandId)
@@ -229,7 +240,7 @@ function BrandPage({ province, nav, go }) {
   )
 }
 
-// ââ SKU list view âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ SKU list view Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function SkuListView({ skus, skuAssets, go, nav }) {
   if (skus.length === 0) return <Empty icon="ti-box" text="No products added yet." />
   return (
@@ -263,7 +274,7 @@ function SkuListView({ skus, skuAssets, go, nav }) {
     </div>
   )
 }
-// ââ Asset type view âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Asset type view Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function AssetTypeView({ typeId, skus, skuAssets, go, nav }) {
   const t = SKU_ASSET_TYPES.find(x => x.id === typeId)
   const filtered = skuAssets.filter(a => a.asset_type === typeId)
@@ -294,7 +305,7 @@ function AssetTypeView({ typeId, skus, skuAssets, go, nav }) {
   )
 }
 
-// ââ Brand asset type view âââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Brand asset type view Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function BrandAssetTypeView({ typeId, brandAssets }) {
   const t = ALL_ASSET_TYPES.find(x => x.id === typeId)
   const files = brandAssets.filter(a => a.asset_type === typeId)
@@ -306,7 +317,7 @@ function BrandAssetTypeView({ typeId, brandAssets }) {
   )
 }
 
-// ââ SKU detail page âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ SKU detail page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function SkuPage({ province, nav, go }) {
   const { brandId, skuId } = nav
   const b = brandById(brandId)
@@ -369,7 +380,7 @@ function SkuPage({ province, nav, go }) {
   )
 }
 
-// ââ Asset card ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Asset card Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function AssetCard({ asset, sku, typeInfo, onSkuClick }) {
   const t = typeInfo || ALL_ASSET_TYPES.find(x => x.id === asset.asset_type) || {}
   return (
@@ -401,39 +412,52 @@ function AssetCard({ asset, sku, typeInfo, onSkuClick }) {
   )
 }
 
-// ââ Inventory page ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-function InventoryPage({ province }) {
-  const [html, setHtml] = useState('')
-  const [lastUpdated, setLastUpdated] = useState(null)
+// Ã¢ÂÂÃ¢ÂÂ Inventory page Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+function InventoryPage() {
+  const [inventories, setInventories] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('inventory').select('*').eq('province', province.code)
-      .order('updated_at', { ascending: false }).limit(1).maybeSingle()
-      .then(({ data }) => { setHtml(data?.html || ''); setLastUpdated(data?.updated_at || null); setLoading(false) })
-  }, [province.code])
+    supabase.from('inventory').select('*').order('province').order('updated_at', { ascending: false })
+      .then(({ data }) => {
+        const seen = {}
+        const latest = (data || []).filter(r => { if (seen[r.province]) return false; seen[r.province] = true; return true; })
+        setInventories(latest)
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) return <div style={{ padding: 40 }}><Spinner /></div>
 
   return (
     <div style={{ flex: 1, background: '#f5f4f0' }}>
-      <div style={{ maxWidth: 680, margin: '0 auto', padding: '28px 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div style={{ fontSize: 18, fontWeight: 500, color: '#1a1a1a' }}>{province.name} â Weekly Inventory</div>
-          {lastUpdated && <div style={{ fontSize: 12, color: '#999' }}>Updated {new Date(lastUpdated).toLocaleDateString()}</div>}
+      <div style={{ maxWidth: 780, margin: '0 auto', padding: '28px 24px' }}>
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ fontSize: 18, fontWeight: 500, color: '#1a1a1a', marginBottom: 4 }}>Weekly Inventory</div>
+          <div style={{ fontSize: 13, color: '#777' }}>Current inventory across all provinces.</div>
         </div>
-        {loading && <Spinner />}
-        {!loading && !html && <Empty icon="ti-package-off" text={`No inventory published yet for ${province.name}.`} />}
-        {!loading && html && <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e8e6e0', padding: 20 }} dangerouslySetInnerHTML={{ __html: html }} />}
+        {inventories.length === 0 && <Empty icon="ti-package-off" text="No inventory published yet." />}
+        {inventories.map(inv => (
+          <div key={inv.province} style={{ marginBottom: 32 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: '#1a1a1a' }}>
+                {PROVINCES.find(p => p.code === inv.province)?.name || inv.province} — Weekly Inventory
+              </div>
+              {inv.updated_at && <div style={{ fontSize: 12, color: '#999' }}>Updated {new Date(inv.updated_at).toLocaleDateString()}</div>}
+            </div>
+            <div style={{ background: '#fff', borderRadius: 12, border: '1px solid #e8e6e0', padding: 20 }} dangerouslySetInnerHTML={{ __html: inv.html }} />
+          </div>
+        ))}
       </div>
     </div>
   )
 }
-
-// ââ Shared UI âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂ Shared UI Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 function Spinner() {
   return (
     <div style={{ textAlign: 'center', padding: '60px 0', color: '#999' }}>
       <i className="ti ti-loader" style={{ fontSize: 24, display: 'block', marginBottom: 8, animation: 'spin 1s linear infinite' }} />
-      Loadingâ¦
+      LoadingÃ¢ÂÂ¦
     </div>
   )
 }
