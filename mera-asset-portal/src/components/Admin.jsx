@@ -48,7 +48,7 @@ export default function Admin() {
 
   return <AdminPanel onSignOut={() => supabase.auth.signOut()} />
 }
-// ── Admin Panel ───────────────────────────────────────────────────────────────
+// -- Admin Panel ---------------------------------------------------------------
 function AdminPanel({ onSignOut }) {
   const [tab, setTab] = useState('skus')
   const [province, setProvince] = useState('ON')
@@ -57,6 +57,7 @@ function AdminPanel({ onSignOut }) {
     { id: 'skus', label: 'Products & Assets', icon: 'ti-list' },
     { id: 'brand', label: 'Brand Assets', icon: 'ti-vector-triangle' },
     { id: 'inventory', label: 'Inventory', icon: 'ti-package' },
+    { id: 'banner', label: 'Hub Banner', icon: 'ti-speakerphone' },
   ]
   return (
     <div style={{ minHeight: '100vh', background: '#f5f4f0' }}>
@@ -94,12 +95,13 @@ function AdminPanel({ onSignOut }) {
         {tab === 'skus'      && <SkuManager province={province} brandId={brand} />}
         {tab === 'brand'     && <BrandAssetManager province={province} brandId={brand} />}
         {tab === 'inventory' && <InventoryManager province={province} />}
+        {tab === 'banner' && <BannerManager />}
       </div>
     </div>
   )
 }
 
-// ── SKU Manager ───────────────────────────────────────────────────────────────
+// -- SKU Manager ---------------------------------------------------------------
 function SkuManager({ province, brandId }) {
   const [skus, setSkus] = useState([])
   const [loading, setLoading] = useState(true)
@@ -168,7 +170,7 @@ function SkuManager({ province, brandId }) {
     </div>
   )
 }
-// ── SKU Row ───────────────────────────────────────────────────────────────────
+// -- SKU Row -------------------------------------------------------------------
 function SkuRow({ sku, expanded, onExpand, onDelete, onToggleNew, onReload }) {
   const [assets, setAssets] = useState([])
   const [assetsLoaded, setAssetsLoaded] = useState(false)
@@ -218,7 +220,7 @@ function SkuRow({ sku, expanded, onExpand, onDelete, onToggleNew, onReload }) {
   )
 }
 
-// ── Asset Type Section ────────────────────────────────────────────────────────
+// -- Asset Type Section --------------------------------------------------------
 function AssetTypeSection({ skuId, assetType, assets, onReload }) {
   const [adding, setAdding] = useState(false)
   const [newUrl, setNewUrl] = useState('')
@@ -278,7 +280,7 @@ function AssetTypeSection({ skuId, assetType, assets, onReload }) {
     </div>
   )
 }
-// ── Asset Row ─────────────────────────────────────────────────────────────────
+// -- Asset Row -----------------------------------------------------------------
 function AssetRow({ asset, onRemove, onReload }) {
   const [editing, setEditing] = useState(false)
   const [url, setUrl] = useState(asset.url)
@@ -332,7 +334,7 @@ function AssetRow({ asset, onRemove, onReload }) {
   )
 }
 
-// ── Brand Asset Manager ───────────────────────────────────────────────────────
+// -- Brand Asset Manager -------------------------------------------------------
 function BrandAssetManager({ province, brandId }) {
   const [assets, setAssets] = useState([])
   const [loading, setLoading] = useState(true)
@@ -418,7 +420,7 @@ function BrandAssetManager({ province, brandId }) {
   )
 }
 
-// ── Inventory Manager ─────────────────────────────────────────────────────────
+// -- Inventory Manager ---------------------------------------------------------
 function InventoryManager({ province }) {
   const [html, setHtml] = useState('')
   const [meta, setMeta] = useState(null)
@@ -455,6 +457,89 @@ function InventoryManager({ province }) {
         <button onClick={publish} disabled={saving || !html.trim()} style={{ background: saving ? '#aaa' : saved ? '#2ecc71' : '#004B6C', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font)', display: 'flex', alignItems: 'center', gap: 6 }}>
           <i className={`ti ${saved ? 'ti-check' : 'ti-upload'}`} style={{ fontSize: 14 }} />
           {saving ? 'Publishing...' : saved ? 'Published!' : 'Publish'}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+// -- Banner Manager ------------------------------------------------------------------
+function BannerManager() {
+  const [form, setForm] = useState({ active: true, title: '', body: '', imageUrl: '', cta: '', ctaUrl: '', color: '#004B6C' })
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    supabase.from('site_config').select('value').eq('key', 'banner').maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) setForm(f => ({ ...f, ...data.value }))
+        setLoading(false)
+      })
+  }, [])
+
+  const save = async () => {
+    setSaving(true)
+    const { data: existing } = await supabase.from('site_config').select('id').eq('key', 'banner').maybeSingle()
+    if (existing) {
+      await supabase.from('site_config').update({ value: form, updated_at: new Date().toISOString() }).eq('key', 'banner')
+    } else {
+      await supabase.from('site_config').insert({ key: 'banner', value: form })
+    }
+    setSaving(false); setSaved(true); setTimeout(() => setSaved(false), 2500)
+  }
+
+  const field = (label, key, type = 'text', hint = '') => (
+    <div style={{ marginBottom: 14 }}>
+      <label style={{ fontSize: 12, fontWeight: 500, color: '#555', display: 'block', marginBottom: 4 }}>{label}</label>
+      <input type={type} value={form[key] || ''} onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))} placeholder={hint}
+        style={{ width: '100%', border: '1px solid #ddd', borderRadius: 8, padding: '9px 12px', fontSize: 13, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
+    </div>
+  )
+
+  if (loading) return <div style={{ padding: 40, textAlign: 'center', color: '#aaa' }}>Loading...</div>
+
+  return (
+    <div style={{ background: '#fff', border: '1px solid #e0deda', borderRadius: 12, padding: '24px 20px', maxWidth: 600 }}>
+      <div style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', marginBottom: 6 }}>Hub Banner</div>
+      <div style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>Changes appear on the hub page for all retailers.</div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18, padding: '12px 14px', background: '#f8f8f6', borderRadius: 8 }}>
+        <span style={{ fontSize: 13, fontWeight: 500, color: '#333' }}>Banner active</span>
+        <button onClick={() => setForm(f => ({ ...f, active: !f.active }))}
+          style={{ marginLeft: 'auto', width: 44, height: 24, borderRadius: 12, border: 'none', cursor: 'pointer', background: form.active ? '#004B6C' : '#ccc', position: 'relative', transition: 'background 0.2s' }}>
+          <span style={{ position: 'absolute', top: 2, left: form.active ? 22 : 2, width: 20, height: 20, background: '#fff', borderRadius: '50%', transition: 'left 0.2s' }} />
+        </button>
+      </div>
+
+      {field('Title', 'title', 'text', 'e.g. New photos available')}
+      {field('Body text', 'body', 'text', 'e.g. Fresh photography is now live...')}
+      {field('Image URL', 'imageUrl', 'url', 'https://... (leave blank for no image)')}
+
+      {form.imageUrl && (
+        <div style={{ marginBottom: 14 }}>
+          <img src={form.imageUrl} alt="preview" style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 8, border: '1px solid #e0deda' }} />
+        </div>
+      )}
+
+      {field('CTA button text', 'cta', 'text', 'e.g. View assets (leave blank to hide button)')}
+      {field('CTA button URL', 'ctaUrl', 'url', 'https://...')}
+
+      <div style={{ marginBottom: 14 }}>
+        <label style={{ fontSize: 12, fontWeight: 500, color: '#555', display: 'block', marginBottom: 4 }}>Background colour</label>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <input type="color" value={form.color || '#004B6C'} onChange={e => setForm(f => ({ ...f, color: e.target.value }))}
+            style={{ width: 40, height: 36, border: '1px solid #ddd', borderRadius: 6, cursor: 'pointer', padding: 2 }} />
+          <input type="text" value={form.color || '#004B6C'} onChange={e => setForm(f => ({ ...f, color: e.target.value }))}
+            style={{ width: 100, border: '1px solid #ddd', borderRadius: 8, padding: '8px 10px', fontSize: 13, fontFamily: 'var(--font)' }} />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 20 }}>
+        <button onClick={save} disabled={saving}
+          style={{ background: saving ? '#aaa' : saved ? '#2ecc71' : '#004B6C', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 24px', fontSize: 13, fontWeight: 500, cursor: saving ? 'default' : 'pointer', fontFamily: 'var(--font)', display: 'flex', alignItems: 'center', gap: 6 }}>
+          <i className={`ti ${saved ? 'ti-check' : 'ti-device-floppy'}`} style={{ fontSize: 14 }} />
+          {saving ? 'Saving...' : saved ? 'Saved!' : 'Save banner'}
         </button>
       </div>
     </div>
