@@ -288,7 +288,7 @@ function AssetTypeSection({ skuId, assetType, assets, onReload }) {
       {adding && (
         <div style={{ background: '#f8f7f5', borderRadius: 8, padding: '12px', marginTop: 6, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
                   <div style={{ flex: 3, minWidth: 200 }}>
-                                  <label style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 3 }}>SharePoint / URL *</label>label>
+                                  <label style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 3 }}>SharePoint / URL *</label>
                                   <div style={{ display: 'flex', gap: 6 }}>
                                                     <input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://..."
                                                                         style={{ flex: 1, border: '1px solid #ddd', borderRadius: 6, padding: '7px 9px', fontSize: 12, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
@@ -414,7 +414,7 @@ function BrandAssetManager({ province, brandId }) {
             </select>
           </div>
                   <div style={{ flex: 3, minWidth: 200 }}>
-                                  <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>URL *</label>label>
+                                  <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>URL *</label>
                                   <div style={{ display: 'flex', gap: 6 }}>
                                                     <input value={addUrl} onChange={e => setAddUrl(e.target.value)} placeholder="https://..."
                                                                         style={{ flex: 1, border: '1px solid #ddd', borderRadius: 7, padding: '8px 10px', fontSize: 13, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
