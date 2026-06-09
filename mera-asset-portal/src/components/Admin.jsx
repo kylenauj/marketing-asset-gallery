@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { supabase, PROVINCES, BRANDS, SKU_ASSET_TYPES, BRAND_ASSET_TYPES } from '../config.js'
+import { supabase, PROVINCES, BRANDS, SKU_ASSET_TYPES, BRAND_ASSET_TYPES, SKU_CATEGORIES } from '../config.js'
 
 const sv = x => x || ''
 
@@ -107,6 +107,7 @@ function SkuManager({ province, brandId }) {
   const [loading, setLoading] = useState(true)
   const [addName, setAddName] = useState('')
   const [addCode, setAddCode] = useState('')
+  const [addCategory, setAddCategory] = useState('')
   const [adding, setAdding] = useState(false)
   const [expanded, setExpanded] = useState(null)
 
@@ -122,7 +123,7 @@ function SkuManager({ province, brandId }) {
   const addSku = async () => {
     if (!addName.trim()) return
     setAdding(true)
-    await supabase.from('skus').insert({ brand: brandId, province, name: addName.trim(), sku_code: addCode.trim() || null })
+    await supabase.from('skus').insert({ brand: brandId, province, name: addName.trim(), sku_code: addCode.trim(), category: addCategory || null })
     setAddName(''); setAddCode(''); setAdding(false); load()
   }
 
@@ -151,6 +152,14 @@ function SkuManager({ province, brandId }) {
           <input value={addCode} onChange={e => setAddCode(e.target.value)} placeholder="e.g. BD-35"
             style={{ width: '100%', border: '1px solid #ddd', borderRadius: 7, padding: '8px 10px', fontSize: 13, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
         </div>
+              <div style={{ flex: 1, minWidth: 120 }}>
+                <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>Category</label>
+                <select value={addCategory} onChange={e => setAddCategory(e.target.value)}
+                  style={{ width: '100%', border: '1px solid #ddd', borderRadius: 8, padding: '8px 10px', fontSize: 13, fontFamily: 'var(--font)', background: '#fff' }}>
+                  <option value="">No category</option>
+                  {SKU_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+                </select>
+              </div>
         <button onClick={addSku} disabled={adding || !addName.trim()} style={{ background: '#004B6C', color: '#fff', border: 'none', borderRadius: 7, padding: '8px 18px', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'var(--font)', display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap' }}>
           <i className="ti ti-plus" style={{ fontSize: 14 }} /> Add Product
         </button>
@@ -171,7 +180,15 @@ function SkuManager({ province, brandId }) {
   )
 }
 // -- SKU Row -------------------------------------------------------------------
-function SkuRow({ sku, expanded, onExpand, onDelete, onToggleNew, onReload }) {
+function SkuRow({
+  const [editCategory, setEditCategory] = useState(sku.category || '')
+
+  const saveCategory = async (val) => {
+    setEditCategory(val)
+    await supabase.from('skus').update({ category: val || null }).eq('id', sku.id)
+    onReload()
+  }
+ sku, expanded, onExpand, onDelete, onToggleNew, onReload }) {
   const [assets, setAssets] = useState([])
   const [assetsLoaded, setAssetsLoaded] = useState(false)
 
@@ -197,7 +214,12 @@ function SkuRow({ sku, expanded, onExpand, onDelete, onToggleNew, onReload }) {
           {sku.sku_code && <span style={{ fontSize: 11, color: '#aaa', marginLeft: 8 }}>{sku.sku_code}</span>}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#555', cursor: 'pointer' }} onClick={e => e.stopPropagation()}>
+          <select value={editCategory} onChange={e => saveCategory(e.target.value)}
+                style={{ border: '1px solid #ddd', borderRadius: 6, padding: '4px 8px', fontSize: 12, fontFamily: 'var(--font)', background: '#fff', color: '#444' }}>
+                <option value="">No category</option>
+                {SKU_CATEGORIES.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+              </select>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#555', cursor: 'pointer' }} onClick={e => e.stopPropagation()}>
             <input type="checkbox" checked={sku.is_new} onChange={onToggleNew} style={{ cursor: 'pointer' }} />
             New badge
           </label>
