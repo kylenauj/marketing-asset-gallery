@@ -180,7 +180,7 @@ function SkuManager({ province, brandId }) {
   )
 }
 // -- SKU Row -------------------------------------------------------------------
-function SkuRow({
+function SkuRow({ sku, expanded, onExpand, onDelete, onToggleNew, onReload }) {
   const [editCategory, setEditCategory] = useState(sku.category || '')
 
   const saveCategory = async (val) => {
@@ -188,7 +188,6 @@ function SkuRow({
     await supabase.from('skus').update({ category: val || null }).eq('id', sku.id)
     onReload()
   }
- sku, expanded, onExpand, onDelete, onToggleNew, onReload }) {
   const [assets, setAssets] = useState([])
   const [assetsLoaded, setAssetsLoaded] = useState(false)
 
