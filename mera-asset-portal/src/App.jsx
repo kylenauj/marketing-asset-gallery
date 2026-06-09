@@ -167,7 +167,7 @@ function HubPage({ province, go }) {
                   <div style={{ fontSize: 16, fontWeight: 700, color: '#1a1a1a', letterSpacing: '-0.01em' }}>{b.name}</div>
                   <div style={{ fontSize: 12, color: '#999', marginTop: 1 }}>
                     {count > 0
-                      ? count + ' product' + (count !== 1 ? 's' : '') + (hasNew ? ' · ' + newCounts[b.id] + ' new' : '')
+                      ? count + ' product' + (count !== 1 ? 's' : '') + (hasNew ? ' Â· ' + newCounts[b.id] + ' new' : '')
                       : 'No products yet'}
                   </div>
                 </div>
@@ -212,7 +212,7 @@ function BrandPage({ province, nav, go }) {
         }
         <div>
           <h2 style={{ fontSize: 24, fontWeight: 700, color: '#1a1a1a', margin: 0, letterSpacing: '-0.02em' }}>{brand.name}</h2>
-          <p style={{ fontSize: 14, color: '#888', margin: '2px 0 0' }}>{province.name} · {skus.length} product{skus.length !== 1 ? 's' : ''}</p>
+          <p style={{ fontSize: 14, color: '#888', margin: '2px 0 0' }}>{province.name} Â· {skus.length} product{skus.length !== 1 ? 's' : ''}</p>
         </div>
       </div>
       <div style={{ display: 'flex', gap: 6, marginBottom: 28, borderBottom: '1px solid #e8e5e0', paddingBottom: 0 }}>
@@ -315,7 +315,7 @@ function SkuPage({ province, nav, go }) {
           {sku.is_new && <span style={{ background: '#A2D074', color: '#2a4a0a', fontSize: 11, fontWeight: 700, padding: '2px 9px', borderRadius: 20 }}>NEW</span>}
           <h2 style={{ fontSize: 20, fontWeight: 700, color: '#1a1a1a', margin: 0, letterSpacing: '-0.01em' }}>{sku.name}</h2>
         </div>
-        {sku.format && <p style={{ fontSize: 13, color: '#888', margin: 0 }}>{brand?.name} · {sku.format}</p>}
+        {sku.format && <p style={{ fontSize: 13, color: '#888', margin: 0 }}>{brand?.name} Â· {sku.format}</p>}
       </div>
       <div style={{ display: 'flex', gap: 6, marginBottom: 24, flexWrap: 'wrap' }}>
         {SKU_ASSET_TYPES.map(t => (
@@ -351,20 +351,25 @@ function AssetCard({ asset }) {
 }
 
 function InventoryPage({ go }) {
-  const [items, setItems] = useState([])
+  const [html, setHtml] = useState(null)
+  const [meta, setMeta] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    supabase.from('weekly_inventory').select('*').order('province').order('section').order('sort_order')
-      .then(({ data, error }) => {
-        if (error) {
-          supabase.from('assets').select('*').eq('asset_type', 'weekly').order('brand')
-            .then(({ data: d2 }) => { setItems(d2 || []); setLoading(false) })
-        } else {
-          setItems(data || []); setLoading(false)
-        }
+    supabase.from('inventory').select('*')
+      .order('updated_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        setHtml(data?.html || null)
+        setMeta(data)
+        setLoading(false)
       })
   }, [])
+
+  const lastUpdated = meta?.updated_at
+    ? new Date(meta.updated_at).toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+    : null
 
   return (
     <div style={{ maxWidth: 1000, margin: '0 auto', padding: '36px 24px' }}>
@@ -374,46 +379,29 @@ function InventoryPage({ go }) {
         </button>
         <div>
           <h2 style={{ fontSize: 22, fontWeight: 700, color: '#1a1a1a', margin: 0, letterSpacing: '-0.01em' }}>Weekly Inventory</h2>
-          <p style={{ fontSize: 13, color: '#999', margin: '2px 0 0' }}>Current stock across all provinces</p>
+          {lastUpdated
+            ? <p style={{ fontSize: 13, color: '#999', margin: '2px 0 0' }}>Published {lastUpdated}</p>
+            : <p style={{ fontSize: 13, color: '#999', margin: '2px 0 0' }}>Current stock report</p>
+          }
         </div>
       </div>
 
-      {loading ? <Spinner /> : items.length === 0
+      {loading ? <Spinner /> : !html
         ? (
-          <div style={{ background: '#fff', border: '1px solid #e8e5e0', borderRadius: 14, overflow: 'hidden' }}>
-            <div style={{ padding: '60px 24px', textAlign: 'center' }}>
-              <i className="ti ti-clipboard-list" style={{ fontSize: 40, color: '#ccc', display: 'block', marginBottom: 12 }} />
-              <div style={{ fontSize: 16, fontWeight: 600, color: '#888', marginBottom: 6 }}>No inventory report yet</div>
-              <div style={{ fontSize: 13, color: '#bbb' }}>Weekly inventory drops will appear here.</div>
-            </div>
+          <div style={{ background: '#fff', border: '1px solid #e8e5e0', borderRadius: 14, padding: '60px 24px', textAlign: 'center' }}>
+            <i className="ti ti-clipboard-list" style={{ fontSize: 40, color: '#ccc', display: 'block', marginBottom: 12 }} />
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#888', marginBottom: 6 }}>No inventory report yet</div>
+            <div style={{ fontSize: 13, color: '#bbb' }}>Weekly inventory drops will appear here once published.</div>
           </div>
         )
         : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            {items.map((item, i) => {
-              const brand = brandById(item.brand)
-              return (
-                <div key={item.id || i} style={{ background: '#fff', border: '1px solid #e8e5e0', borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
-                  {brand && <div style={{ width: 10, height: 10, background: brand.color, borderRadius: '50%', flexShrink: 0 }} />}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a' }}>{item.name || item.title || 'Item'}</div>
-                    {item.brand && <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{brand?.name || item.brand} {item.province ? ' · ' + item.province : ''}</div>}
-                  </div>
-                  {item.url && (
-                    <a href={item.url} target="_blank" rel="noreferrer"
-                      style={{ fontSize: 12, fontWeight: 600, color: '#004B6C', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      View <i className="ti ti-external-link" style={{ fontSize: 12 }} />
-                    </a>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+          <div dangerouslySetInnerHTML={{ __html: html }} />
         )
       }
     </div>
   )
 }
+
 
 function Spinner() {
   return (
