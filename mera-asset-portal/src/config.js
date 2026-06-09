@@ -26,7 +26,7 @@ export const BRANDS = [
     id: 'litti',
     name: 'LITTI.',
     color: '#004B6C',
-    logoUrl: '',
+    logoUrl: 'https://avanacanada.sharepoint.com/:i:/s/MeraExternalSite/IQAj5obCDxhRQp_u34r3g08tAf_UL6eyBTjhep8MrzRxypc?e=nLqYCG',
     provinces: ['ON', 'AB', 'SK', 'MB'],
   },
   {
