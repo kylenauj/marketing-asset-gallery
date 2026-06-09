@@ -2,6 +2,14 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase, PROVINCES, BRANDS, SKU_ASSET_TYPES, BRAND_ASSET_TYPES, SKU_CATEGORIES } from '../config.js'
 
 const sv = x => x || ''
+const uploadFile = async (file, folder = 'uploads') => {
+    const ext = file.name.split('.').pop()
+    const path = `${folder}/${Date.now()}.${ext}`
+    const { error } = await supabase.storage.from('assets').upload(path, file, { upsert: true })
+    if (error) { alert('Upload failed: ' + error.message); return null }
+    const { data } = supabase.storage.from('assets').getPublicUrl(path)
+    return data.publicUrl
+}
 
 export default function Admin() {
   const [session, setSession] = useState(undefined)
@@ -248,6 +256,7 @@ function AssetTypeSection({ skuId, assetType, assets, onReload }) {
   const [newLabel, setNewLabel] = useState('')
   const [newSize, setNewSize] = useState('')
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   const save = async () => {
     if (!newUrl.trim()) return
@@ -278,11 +287,17 @@ function AssetTypeSection({ skuId, assetType, assets, onReload }) {
       {assets.map(a => <AssetRow key={a.id} asset={a} onRemove={() => remove(a.id)} onReload={onReload} />)}
       {adding && (
         <div style={{ background: '#f8f7f5', borderRadius: 8, padding: '12px', marginTop: 6, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-          <div style={{ flex: 3, minWidth: 200 }}>
-            <label style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 3 }}>SharePoint / URL *</label>
-            <input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://..."
-              style={{ width: '100%', border: '1px solid #ddd', borderRadius: 6, padding: '7px 9px', fontSize: 12, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
-          </div>
+                  <div style={{ flex: 3, minWidth: 200 }}>
+                                  <label style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 3 }}>SharePoint / URL *</label>label>
+                                  <div style={{ display: 'flex', gap: 6 }}>
+                                                    <input value={newUrl} onChange={e => setNewUrl(e.target.value)} placeholder="https://..."
+                                                                        style={{ flex: 1, border: '1px solid #ddd', borderRadius: 6, padding: '7px 9px', fontSize: 12, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
+                                                    <label style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#f0f0f0', border: '1px solid #ddd', borderRadius: 6, padding: '0 10px', fontSize: 11, cursor: uploading ? 'wait' : 'pointer', whiteSpace: 'nowrap', color: '#555' }}>
+                                                                        <i className="ti ti-upload" style={{ fontSize: 13 }} />{uploading ? 'Uploading...' : 'Upload'}
+                                                                        <input type="file" accept="image/*,application/pdf" style={{ display: 'none' }} onChange={async e => { const f = e.target.files[0]; if (!f) return; setUploading(true); const url = await uploadFile(f, 'sku-assets'); if (url) setNewUrl(url); setUploading(false); e.target.value = '' }} />
+                                                    </label>
+                                  </div>
+                  </div>
           <div style={{ flex: 2, minWidth: 130 }}>
             <label style={{ fontSize: 10, color: '#888', display: 'block', marginBottom: 3 }}>Label (optional)</label>
             <input value={newLabel} onChange={e => setNewLabel(e.target.value)} placeholder="e.g. Front view"
@@ -364,6 +379,7 @@ function BrandAssetManager({ province, brandId }) {
   const [addLabel, setAddLabel] = useState('')
   const [addSize, setAddSize] = useState('')
   const [adding, setAdding] = useState(false)
+      const [uploading, setUploading] = useState(false)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -397,11 +413,17 @@ function BrandAssetManager({ province, brandId }) {
               {BRAND_ASSET_TYPES.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
             </select>
           </div>
-          <div style={{ flex: 3, minWidth: 200 }}>
-            <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>URL *</label>
-            <input value={addUrl} onChange={e => setAddUrl(e.target.value)} placeholder="https://..."
-              style={{ width: '100%', border: '1px solid #ddd', borderRadius: 7, padding: '8px 10px', fontSize: 13, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
-          </div>
+                  <div style={{ flex: 3, minWidth: 200 }}>
+                                  <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>URL *</label>label>
+                                  <div style={{ display: 'flex', gap: 6 }}>
+                                                    <input value={addUrl} onChange={e => setAddUrl(e.target.value)} placeholder="https://..."
+                                                                        style={{ flex: 1, border: '1px solid #ddd', borderRadius: 7, padding: '8px 10px', fontSize: 13, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
+                                                    <label style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#f0f0f0', border: '1px solid #ddd', borderRadius: 7, padding: '0 10px', fontSize: 12, cursor: uploading ? 'wait' : 'pointer', whiteSpace: 'nowrap', color: '#555' }}>
+                                                                        <i className="ti ti-upload" style={{ fontSize: 13 }} />{uploading ? 'Uploading...' : 'Upload'}
+                                                                        <input type="file" accept="image/*,application/pdf" style={{ display: 'none' }} onChange={async e => { const f = e.target.files[0]; if (!f) return; setUploading(true); const url = await uploadFile(f, 'brand-assets'); if (url) setAddUrl(url); setUploading(false); e.target.value = '' }} />
+                                                    </label>
+                                  </div>
+                  </div>
           <div style={{ flex: 2, minWidth: 130 }}>
             <label style={{ fontSize: 11, color: '#888', display: 'block', marginBottom: 4 }}>Label</label>
             <input value={addLabel} onChange={e => setAddLabel(e.target.value)} placeholder="Optional"
@@ -490,6 +512,7 @@ function BannerManager() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+      const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     supabase.from('site_config').select('value').eq('key', 'banner').maybeSingle()
@@ -535,7 +558,17 @@ function BannerManager() {
 
       {field('Title', 'title', 'text', 'e.g. New photos available')}
       {field('Body text', 'body', 'text', 'e.g. Fresh photography is now live...')}
-      {field('Image URL', 'imageUrl', 'url', 'https://... (leave blank for no image)')}
+              <div style={{ marginBottom: 14 }}>
+                              <label style={{ fontSize: 12, fontWeight: 500, color: '#555', display: 'block', marginBottom: 4 }}>Image URL</label>
+                              <div style={{ display: 'flex', gap: 8 }}>
+                                                <input type="url" value={form.imageUrl || ''} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} placeholder="https://... (leave blank for no image)"
+                                                                    style={{ flex: 1, width: '100%', border: '1px solid #ddd', borderRadius: 8, padding: '9px 12px', fontSize: 13, fontFamily: 'var(--font)', boxSizing: 'border-box' }} />
+                                                <label style={{ display: 'flex', alignItems: 'center', gap: 5, background: '#f0f0f0', border: '1px solid #ddd', borderRadius: 8, padding: '0 14px', fontSize: 13, cursor: uploading ? 'wait' : 'pointer', whiteSpace: 'nowrap', color: '#555' }}>
+                                                                    <i className="ti ti-upload" style={{ fontSize: 14 }} />{uploading ? 'Uploading...' : 'Upload image'}
+                                                                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={async e => { const f = e.target.files[0]; if (!f) return; setUploading(true); const url = await uploadFile(f, 'banner'); if (url) setForm(fm => ({ ...fm, imageUrl: url })); setUploading(false); e.target.value = '' }} />
+                                                </label>
+                              </div>
+              </div>
 
       {form.imageUrl && (
         <div style={{ marginBottom: 14 }}>
@@ -547,7 +580,7 @@ function BannerManager() {
       {field('CTA button URL', 'ctaUrl', 'url', 'https://...')}
 
       <div style={{ marginBottom: 14 }}>
-        <label style={{ fontSize: 12, fontWeight: 500, color: '#555', display: 'block', marginBottom: 4 }}>Background colour</label>
+        <label style={{ fontSize: 12, fontWeight: 500, color: '#555', display: 'block', hmarginBottom: 4 }}>Background colour</label>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <input type="color" value={form.color || '#004B6C'} onChange={e => setForm(f => ({ ...f, color: e.target.value }))}
             style={{ width: 40, height: 36, border: '1px solid #ddd', borderRadius: 6, cursor: 'pointer', padding: 2 }} />
