@@ -245,18 +245,69 @@ function SkuListView({ skus, brand, go }) {
   if (!skus.length) return <Empty msg="No products listed yet for this brand in your province." />
 
   const usedCategoryIds = [...new Set(skus.map(s => s.category).filter(Boolean))]
+  const hasCategories = usedCategoryIds.length > 0
+
   const categories = [
     { id: 'all', label: 'All' },
     ...SKU_CATEGORIES.filter(c => usedCategoryIds.includes(c.id)),
     ...usedCategoryIds.filter(id => !SKU_CATEGORIES.find(c => c.id === id)).map(id => ({ id, label: id })),
   ]
-  const hasCategories = usedCategoryIds.length > 0
+
   const filtered = activeCategory === 'all' ? skus : skus.filter(s => s.category === activeCategory)
+
+  const grouped = {}
+  const uncategorized = []
+  filtered.forEach(sku => {
+    if (sku.category) {
+      if (!grouped[sku.category]) grouped[sku.category] = []
+      grouped[sku.category].push(sku)
+    } else {
+      uncategorized.push(sku)
+    }
+  })
+
+  const renderSkuRow = (sku) => (
+    <div key={sku.id} onClick={() => go({ view: 'sku', skuId: sku.id, brandId: brand.id })}
+      style={{ background: '#fff', border: '1px solid #e8e5e0', borderRadius: 12, padding: '14px 18px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: 'all 0.12s', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor='#004B6C'; e.currentTarget.style.boxShadow='0 3px 10px rgba(0,75,108,0.1)' }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor='#e8e5e0'; e.currentTarget.style.boxShadow='0 1px 3px rgba(0,0,0,0.04)' }}>
+      <div style={{ width: 36, height: 36, background: brand.color, borderRadius: 8, flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
+          {sku.is_new && <span style={{ background: '#A2D074', color: '#2a4a0a', fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 20, letterSpacing: '0.04em', flexShrink: 0 }}>NEW</span>}
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{sku.name}</span>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          {SKU_ASSET_TYPES.map(t => (
+            <span key={t.id} style={{ fontSize: 10, padding: '2px 8px', borderRadius: 20, background: t.color, color: t.iconColor, fontWeight: 600 }}>{t.label}</span>
+          ))}
+        </div>
+      </div>
+      <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc' }} />
+    </div>
+  )
+
+  const renderGroup = (catId, skuList) => {
+    const catInfo = SKU_CATEGORIES.find(c => c.id === catId)
+    const label = catInfo?.label || catId
+    return (
+      <div key={catId} style={{ marginBottom: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, color: '#999', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</span>
+          <div style={{ flex: 1, height: 1, background: '#e8e5e0' }} />
+          <span style={{ fontSize: 11, color: '#bbb', fontWeight: 500 }}>{skuList.length}</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {skuList.map(renderSkuRow)}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div>
       {hasCategories && (
-        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 18 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 20 }}>
           {categories.map(cat => {
             const active = activeCategory === cat.id
             const catCount = cat.id === 'all' ? skus.length : skus.filter(s => s.category === cat.id).length
@@ -270,37 +321,23 @@ function SkuListView({ skus, brand, go }) {
           })}
         </div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {filtered.map(sku => (
-          <div key={sku.id} onClick={() => go({ view: 'sku', skuId: sku.id, brandId: brand.id })}
-            style={{ background: '#fff', border: '1px solid #e8e5e0', borderRadius: 12, padding: '14px 18px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14, transition: 'all 0.12s', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor='#004B6C'; e.currentTarget.style.boxShadow='0 3px 10px rgba(0,75,108,0.1)' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor='#e8e5e0'; e.currentTarget.style.boxShadow='0 1px 3px rgba(0,0,0,0.04)' }}>
-            <div style={{ width: 36, height: 36, background: brand.color, borderRadius: 8, flexShrink: 0 }} />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#1a1a1a', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
-                {sku.is_new && <span style={{ background: '#A2D074', color: '#2a4a0a', fontSize: 10, fontWeight: 700, padding: '1px 7px', borderRadius: 20, letterSpacing: '0.04em', flexShrink: 0 }}>NEW</span>}
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{sku.name}</span>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, alignItems: 'center' }}>
-                {sku.category && (
-                  <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 20, background: '#efefed', color: '#666', fontWeight: 500 }}>
-                    {SKU_CATEGORIES.find(c => c.id === sku.category)?.label || sku.category}
-                  </span>
-                )}
-                {SKU_ASSET_TYPES.map(t => (
-                  <span key={t.id} style={{ fontSize: 10, padding: '2px 8px', borderRadius: 20, background: t.color, color: t.iconColor, fontWeight: 600 }}>{t.label}</span>
-                ))}
-              </div>
-            </div>
-            <i className="ti ti-chevron-right" style={{ fontSize: 16, color: '#ccc' }} />
+      {hasCategories && activeCategory === 'all'
+        ? (
+          <div>
+            {SKU_CATEGORIES.filter(c => grouped[c.id]?.length).map(c => renderGroup(c.id, grouped[c.id]))}
+            {Object.keys(grouped).filter(k => !SKU_CATEGORIES.find(c => c.id === k)).map(k => renderGroup(k, grouped[k]))}
+            {uncategorized.length > 0 && renderGroup('uncategorized', uncategorized)}
           </div>
-        ))}
-      </div>
+        )
+        : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {filtered.map(renderSkuRow)}
+          </div>
+        )
+      }
     </div>
   )
 }
-
 function AssetTypeView({ assets, loading }) {
   if (loading) return <Spinner />
   if (!assets?.length) return <Empty msg="No assets available yet." />
