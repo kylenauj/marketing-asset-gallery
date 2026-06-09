@@ -524,7 +524,7 @@ function BannerManager() {
 
   const save = async () => {
     setSaving(true)
-    const { data: existing } = await supabase.from('site_config').select('id').eq('key', 'banner').maybeSingle()
+    const { data: existing } = await supabase.from('site_config').select('key').eq('key', 'banner').maybeSingle()
     if (existing) {
       await supabase.from('site_config').update({ value: form, updated_at: new Date().toISOString() }).eq('key', 'banner')
     } else {
