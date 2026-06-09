@@ -19,7 +19,6 @@ export const PROVINCES = [
 // ---------------------------------------------------------------------------
 // BRANDS
 // provinces: list of province codes this brand appears in.
-//   Add 'MB' to include Manitoba, remove 'AB' to exclude Alberta, etc.
 // logoUrl: URL to the brand logo image (PNG/SVG). Leave empty string for colour swatch fallback.
 // ---------------------------------------------------------------------------
 export const BRANDS = [
@@ -68,24 +67,37 @@ export const BRANDS = [
 ]
 
 // ---------------------------------------------------------------------------
-// ASSET TYPES - SKU level (shown per product)
+// ASSET TYPES - SKU level (shown per product, in the product detail tabs)
 // ---------------------------------------------------------------------------
 export const SKU_ASSET_TYPES = [
-  { id: 'sellsheet', label: 'Sell Sheet',      icon: 'ti-file-description', color: '#fce9e9', iconColor: '#b83232' },
-  { id: 'tvad',      label: 'TV Ad',            icon: 'ti-device-tv',        color: '#e8eef8', iconColor: '#2a4fa0' },
-  { id: 'webcard',   label: 'Web Product Card', icon: 'ti-browser',          color: '#e8f4ec', iconColor: '#2d7a45' },
-  { id: 'brandbook', label: 'Brand Book',       icon: 'ti-books',            color: '#fff0e8', iconColor: '#a04010' },
+  { id: 'sellsheet', label: 'Sell Sheet', icon: 'ti-file-description', color: '#fce9e9', iconColor: '#b83232' },
+  { id: 'tvad', label: 'TV Ad', icon: 'ti-device-tv', color: '#e8eef8', iconColor: '#2a4fa0' },
+  { id: 'webcard', label: 'Web Product Card', icon: 'ti-browser', color: '#e8f4ec', iconColor: '#2d7a45' },
 ]
 
 // ---------------------------------------------------------------------------
-// ASSET TYPES - Brand level (not tied to a specific product)
+// ASSET TYPES - Brand level (shown as tabs on the brand page, not product-specific)
 // ---------------------------------------------------------------------------
 export const BRAND_ASSET_TYPES = [
-  { id: 'logo',   label: 'Logo Pack',        icon: 'ti-vector-triangle', color: '#fef8e3', iconColor: '#8a6800' },
-  { id: 'weekly', label: 'Weekly Inventory', icon: 'ti-calendar-stats',  color: '#e8f8f4', iconColor: '#0f6e56' },
+  { id: 'logo', label: 'Logo Pack', icon: 'ti-vector-triangle', color: '#fef8e3', iconColor: '#8a6800' },
+  { id: 'brandbook', label: 'Brand Book', icon: 'ti-books', color: '#fff0e8', iconColor: '#a04010' },
 ]
 
 export const ALL_ASSET_TYPES = [...SKU_ASSET_TYPES, ...BRAND_ASSET_TYPES]
 
 // Legacy alias
 export const ASSET_TYPES = ALL_ASSET_TYPES
+
+// ---------------------------------------------------------------------------
+// SKU CATEGORIES
+// Used to group/filter products on the brand page. Add or rename as needed.
+// Each SKU in Supabase should have a 'category' column matching one of these.
+// ---------------------------------------------------------------------------
+export const SKU_CATEGORIES = [
+  { id: 'vape', label: 'Vapes' },
+  { id: 'flower', label: 'Flower' },
+  { id: 'preroll', label: 'Pre-Rolls' },
+  { id: 'concentrate', label: 'Concentrates' },
+  { id: 'edible', label: 'Edibles' },
+  { id: 'other', label: 'Other' },
+]
